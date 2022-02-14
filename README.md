@@ -12,4 +12,4 @@ To get round this if you want to reorder and then save that by parsing through t
 
 I cannot find a way of changing the Index property of a column after it has been created, so this copy method although cumbersome is what I have used.
 
-As this is only a quick example it does not have all the bells and wistles one might want to use, it just illustrates how I got over a problem I encountered.
+As this is only a quick example it does not have all the bells and wistles one might want to use, it just illustrates how I got over a problem I encountered. The files you save are put in the same folder as the "exe" you run. 

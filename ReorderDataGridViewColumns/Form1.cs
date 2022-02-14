@@ -17,11 +17,25 @@ namespace ReorderDataGridViewColumns
         {
 
             //Create Columns
+            //col 0, 1, 2 = text
             dgv_one.Columns.Add("0", "Zero");
             dgv_one.Columns.Add("1", "One");
             dgv_one.Columns.Add("2", "Two");
-            dgv_one.Columns.Add("3", "Three");
-            dgv_one.Columns.Add("4", "Four");
+
+            //col 3 = checkbox
+            DataGridViewCheckBoxColumn chkbx = new DataGridViewCheckBoxColumn();
+            chkbx.HeaderText = "Three";
+            chkbx.Name = "3";
+            dgv_one.Columns.Add(chkbx);
+
+            //col 4 = Combobox
+            DataGridViewComboBoxColumn Animal_Cmbobx = new DataGridViewComboBoxColumn();
+            Animal_Cmbobx.HeaderText = "Farm";
+            Animal_Cmbobx.Items.Add("Pig");
+            Animal_Cmbobx.Items.Add("Cow");
+            Animal_Cmbobx.Items.Add("Goat");
+            Animal_Cmbobx.Name = "4";
+            dgv_one.Columns.Add(Animal_Cmbobx);
 
             dgv_one.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgv_one.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -40,7 +54,7 @@ namespace ReorderDataGridViewColumns
             //Populate rows
             for (int i = 0; i < 20; i++)
             {
-                for (int j = 0; j < 5; j++)
+                for (int j = 0; j < 3; j++)
                 {
                     dgv_one.Rows[i].Cells[j].Value = (i * j); //put the data into the cell
                 }
@@ -58,13 +72,9 @@ namespace ReorderDataGridViewColumns
 
 
             //copy data
-            foreach (DataGridViewRow dgvr in dgv_one.Rows)
-            {
-                dgv_two.Rows.Add(dgvr.Clone() as DataGridViewRow);
-            }
-
             for (int i = 0; i < 20; i++)
             {
+                dgv_two.Rows.Add();
                 dgv_two.Rows[i].Cells[0].Value = dgv_one.Rows[i].Cells[4].Value;
                 dgv_two.Rows[i].Cells[1].Value = dgv_one.Rows[i].Cells[0].Value;
                 dgv_two.Rows[i].Cells[2].Value = dgv_one.Rows[i].Cells[3].Value;
@@ -84,78 +94,64 @@ namespace ReorderDataGridViewColumns
 
         }
 
-        //print left-hand reordered dgv
-
+        //print left-hand reordered dgv via stream
         private void prn_dgv_one_stream_Click(object sender, EventArgs e)
         {
-            //print lefthand dgv
-            var sb = new StringBuilder();
-
-            var headers = dgv_one.Columns.Cast<DataGridViewColumn>();
-            sb.AppendLine(string.Join(",", headers.Select(column => "\"" + column.HeaderText + "\"").ToArray()));
-
-            foreach (DataGridViewRow row in dgv_one.Rows)
-            {
-               var cells = row.Cells.Cast<DataGridViewCell>();
-                sb.AppendLine(string.Join(",", cells.Select(cell => "\"" + cell.Value + "\"").ToArray()));
-            }
-
-            File.WriteAllText("StreamPrintdgv_left.csv", sb.ToString());
+            StreamSavePrint(dgv_one);
         }
 
-        private void btn_prn_dgv_one_Click(object sender, EventArgs e)
-        {
-
-            //write with header
-             dgv_one.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
-            //or
-            // write without header.
-           //dgv_one.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-
-
-            // Select all the cells
-            dgv_one.SelectAll();
-            // Copy selected cells to DataObject
-            DataObject dataObject = dgv_one.GetClipboardContent();
-            // Get the text of the DataObject, and serialize it to a file
-            File.WriteAllText("CopyPrintdgv_left.csv", dataObject.GetText(TextDataFormat.CommaSeparatedValue));
-
-
-        }
-
-        //print right-hand copied dgv
-
-        private void btn_prn_dgv_two_Click(object sender, EventArgs e)
-        {
-            //write with header
-            dgv_two.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
-            //or
-            // write without header.
-            //dgv_one.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-
-
-            // Select all the cells
-            dgv_two.SelectAll();
-            // Copy selected cells to DataObject
-            DataObject dataObject = dgv_two.GetClipboardContent();
-            // Get the text of the DataObject, and serialize it to a file
-            File.WriteAllText("CopyPrintdgv_right.csv", dataObject.GetText(TextDataFormat.CommaSeparatedValue));
-        }
-
+        //print right-hand reordered dgv via stream
         private void prn_dgv_two_stream_Click(object sender, EventArgs e)
         {
-            var sb = new StringBuilder();
+            StreamSavePrint(dgv_two);
+        }
 
-            var headers = dgv_two.Columns.Cast<DataGridViewColumn>();
+        //print left-hand reordered dgv via copy
+        private void btn_prn_dgv_one_Click(object sender, EventArgs e)
+        {
+            CopySavePrint(dgv_one);
+        }
+
+        //print right-hand reordered dgv via copy
+        private void btn_prn_dgv_two_Click(object sender, EventArgs e)
+        {
+            CopySavePrint(dgv_two);
+        }
+
+       
+
+        private void CopySavePrint(DataGridView dgv)
+        {
+            //write with header
+            dgv.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+            //or
+            // write without header.
+            //dgv.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+
+
+            // Select all the cells
+            dgv.SelectAll();
+            // Copy selected cells to DataObject
+            DataObject dataObject = dgv.GetClipboardContent();
+            // Get the text of the DataObject, and serialize it to a file
+            File.WriteAllText(dgv.Name + "_copy.csv", dataObject.GetText(TextDataFormat.CommaSeparatedValue));
+        }
+
+        private void StreamSavePrint(DataGridView dgv)
+        {
+            var sb = new StringBuilder();
+             
+
+            var headers = dgv.Columns.Cast<DataGridViewColumn>();
             sb.AppendLine(string.Join(",", headers.Select(column => "\"" + column.HeaderText + "\"").ToArray()));
 
-            foreach (DataGridViewRow row in dgv_two.Rows)
+            foreach (DataGridViewRow row in dgv.Rows)
             {
                 var cells = row.Cells.Cast<DataGridViewCell>();
                 sb.AppendLine(string.Join(",", cells.Select(cell => "\"" + cell.Value + "\"").ToArray()));
             }
 
-            File.WriteAllText("StreamPrintdgv_right.csv", sb.ToString());
+            File.WriteAllText(dgv.Name + "_stream.csv", sb.ToString());
         }
     }
 }

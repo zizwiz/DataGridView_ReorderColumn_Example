@@ -11,3 +11,5 @@ When you save the left hand reordered DGV by copy to clipboard you get the view 
 To get round this if you want to reorder and then save that by parsing through the DGV then you must Copy the original DGV to a new DGV column by column in the order you now want. There are many ways to do this I just show on simple way what you would probably want to do is put the column in a temporary list, remove all columns and add them again.
 
 I cannot find a way of changing the Index property of a column after it has been created, so this copy method although cumbersome is what I have used.
+
+As this is only a quick example it does not have all the bells and wistles one might want to use, it just illustrates how I got over a problem I encountered.

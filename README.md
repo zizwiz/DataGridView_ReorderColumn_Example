@@ -1,4 +1,4 @@
-# DataGridView_ReorderColumn_Example
+# DataGridView Reorder Column Example
 
 DataGridView Column have many ways you can address them, two are their name or their index number in the DataGridView Collection. 
 
